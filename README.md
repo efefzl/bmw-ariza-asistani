@@ -1,134 +1,163 @@
-# 🚗 BMW X1 Arıza Tanı Asistanı
+# 🚗 BMW X1 AI Diagnostic Assistant
 
-> 2016 model BMW X1 sDrive18i sahipleri için AI destekli arıza tanı asistanı.  
-> Telegram üzerinden çalışır — arızanı yaz veya fotoğraf gönder, detaylı rapor al.
+> An AI-powered fault diagnosis assistant for 2016 BMW X1 sDrive18i owners.  
+> Works via Telegram — describe your issue or send a photo, get a detailed diagnostic report instantly.
 
----
-
-## 🎯 Ne Yapar?
-
-- 🔍 **Web araştırması** — BMW forumları ve teknik dokümanları otomatik tarar
-- 🔧 **OBD-II kodları** — Olası hata kodlarını listeler
-- 🔩 **Parça numaraları** — BMW OEM parça numaralarını verir
-- 💰 **Maliyet tahmini** — Türkiye piyasası için TL ve EUR cinsinden
-- 📸 **Fotoğraf analizi** — Arızalı bölgenin fotoğrafını gönder, AI analiz etsin
-- 🧠 **Hafıza** — Geçmiş arızalarını hatırlar, bağlantı kurar
-- ⚠️ **Aciliyet seviyesi** — Hemen git / Yakında git / Rutin bakımda bak
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![Claude](https://img.shields.io/badge/AI-Claude%20Anthropic-orange)
+![Telegram](https://img.shields.io/badge/Platform-Telegram-2CA5E0)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
 
-## 📱 Nasıl Görünür?
+## 🎯 What Does It Do?
+
+- 🔍 **Automatic web research** — Scans BMW forums and technical documents
+- 🔧 **OBD-II fault codes** — Lists likely error codes for your symptoms
+- 🔩 **OEM part numbers** — Provides exact BMW part numbers
+- 💰 **Cost estimation** — Parts and labor costs in USD and EUR
+- 📸 **Photo analysis** — Send a photo of the faulty area, AI analyzes it
+- 🧠 **Memory** — Remembers your past issues and finds connections
+- ⚠️ **Urgency level** — Drive immediately / Visit soon / Check at next service
+
+---
+
+## 📱 How It Works
 ```
-Sen → "Soğuk havada motor titriyor"
+You  → "Engine shakes badly on cold start, rough idle"
 
-Bot → 🔍 Araştırılıyor...
-      🔎 web_search: '2016 BMW X1 F48 B38 cold start rough idle'
-      🔎 web_search: 'BMW X1 B38 motor titreşim Türkiye'
+Bot  → 🔍 Researching...
+       🔎 Searching: '2016 BMW X1 F48 B38 cold start rough idle'
+       🔎 Searching: 'BMW B38 misfire OBD codes part numbers'
 
-Bot → 📄 RAPOR:
-      1. 🔍 Olası Sebepler: Ateşleme bujisi (%80), ...
-      2. 🔧 OBD Kodları: P0300, P0301...
-      3. 🔩 Parça No: 12 12 2 158 252 (Buji Seti)
-      4. 💰 Maliyet: 800-1200 TL (parça) + 300 TL işçilik
-      5. ⚠️ Aciliyet: 🟡 Bu hafta içinde git
+Bot  → 📄 DIAGNOSTIC REPORT:
+       1. 🔍 Likely Causes: Spark plugs (80%), Ignition coil (60%)...
+       2. 🔧 OBD Codes: P0300, P0301, P0302
+       3. 🔩 Part No: 12 12 2 158 252 (Spark Plug Set)
+       4. 💰 Cost: $45-80 (parts) + $30 labor
+       5. ⚠️ Urgency: 🟡 Visit a mechanic this week
 ```
 
 ---
 
-## 🛠️ Kurulum
+## 🛠️ Installation
 
-### Gereksinimler
+### Requirements
 - Python 3.10+
-- Anthropic API anahtarı → [console.anthropic.com](https://console.anthropic.com)
-- Tavily API anahtarı → [tavily.com](https://tavily.com)
+- Anthropic API key → [console.anthropic.com](https://console.anthropic.com)
+- Tavily API key → [tavily.com](https://tavily.com) *(free tier: 1000 searches/month)*
 - Telegram Bot Token → [@BotFather](https://t.me/botfather)
 
-### Adımlar
+### Steps
 ```bash
-# 1. Repoyu klonla
+# 1. Clone the repository
 git clone https://github.com/efefzl/bmw-ariza-asistani.git
 cd bmw-ariza-asistani
 
-# 2. Sanal ortam oluştur
+# 2. Create virtual environment
 python -m venv venv
-source venv/bin/activate  # Mac/Linux
-venv\Scripts\activate     # Windows
+source venv/bin/activate   # Mac/Linux
+venv\Scripts\activate      # Windows
 
-# 3. Kütüphaneleri kur
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. API anahtarlarını ayarla
+# 4. Configure API keys
 cp .env.example .env
-# .env dosyasını aç ve anahtarları gir
+# Open .env and add your keys
 ```
 
-### `.env` Dosyası
+### `.env` Configuration
 ```
 ANTHROPIC_API_KEY=sk-ant-...
 TAVILY_API_KEY=tvly-...
 TELEGRAM_BOT_TOKEN=...
 ```
 
-### Çalıştır
+### Run
 ```bash
 python telegram_bot.py
 ```
 
 ---
 
-## 📁 Proje Yapısı
+## 📁 Project Structure
 ```
 bmw-ariza-asistani/
-├── agent.py          # Ana agent mantığı (web araştırma döngüsü)
-├── tools.py          # Web arama ve sayfa okuma araçları
-├── prompts.py        # BMW'ye özel sistem promptu
-├── memory.py         # Kullanıcı bazlı konuşma geçmişi
-├── database.py       # Arıza veritabanı (zamanla öğrenme)
-├── vision.py         # Fotoğraf analizi (Claude Vision)
-├── telegram_bot.py   # Telegram bot arayüzü
-├── .env.example      # API anahtarı şablonu
-└── requirements.txt  # Bağımlılıklar
+├── agent.py          # Core agent logic (web research loop)
+├── tools.py          # Web search and page reading tools
+├── prompts.py        # BMW-specific system prompt
+├── memory.py         # Per-user conversation history
+├── database.py       # Fault database (learns over time)
+├── vision.py         # Photo analysis (Claude Vision)
+├── telegram_bot.py   # Telegram bot interface
+├── .env.example      # API key template
+└── requirements.txt  # Dependencies
 ```
 
 ---
 
-## 🤖 Kullanılan Teknolojiler
+## 🤖 Tech Stack
 
-| Teknoloji | Kullanım |
+| Technology | Purpose |
 |---|---|
-| [Claude (Anthropic)](https://anthropic.com) | AI analiz motoru |
-| [Tavily](https://tavily.com) | Web araştırma API'si |
-| [python-telegram-bot](https://python-telegram-bot.org) | Telegram entegrasyonu |
+| [Claude (Anthropic)](https://anthropic.com) | AI analysis engine |
+| [Tavily](https://tavily.com) | Real-time web research API |
+| [python-telegram-bot](https://python-telegram-bot.org) | Telegram integration |
 
 ---
 
-## 📋 Telegram Komutları
+## 📋 Telegram Commands
 
-| Komut | Açıklama |
+| Command | Description |
 |---|---|
-| `/start` | Asistanı başlat |
-| `/gecmis` | Geçmiş arızaları gör |
-| Metin | Arızayı tarif et |
-| Fotoğraf | Arızalı bölgeyi gönder |
+| `/start` | Start the assistant |
+| `/history` | View your past diagnostic reports |
+| Text message | Describe your car issue |
+| Photo | Send a photo of the problem area |
 
 ---
 
-## ⚠️ Yasal Uyarı
+## 🗺️ Roadmap
 
-Bu asistan bir **ön tanı aracıdır**. Ürettiği raporlar bilgi amaçlıdır.  
-Kesin teşhis ve tamir için yetkili BMW servisi veya uzman bir tamirciye başvurun.
-
----
-
-## 🌟 Destek
-
-Bu projeyi faydalı buluyorsan:
-- ⭐ **Yıldız ver** — Projenin büyümesine yardımcı olur
-- 🐛 **Issue aç** — Hata veya öneri bildir
-- 💝 **[Sponsor ol](https://github.com/sponsors/efefzl)** — Geliştirmeye destek ol
+- [x] Web research agent
+- [x] OBD code detection
+- [x] OEM part number lookup
+- [x] Photo analysis
+- [x] Fault memory & learning
+- [ ] Web interface (SaaS)
+- [ ] Support for more BMW models
+- [ ] Integration with OBD-II Bluetooth scanners
+- [ ] Multilingual support
 
 ---
 
-## 📄 Lisans
+## 🤝 Contributing
 
-MIT License — Serbestçe kullanabilir, geliştirebilir ve dağıtabilirsin.
+Contributions are welcome! Feel free to:
+- 🐛 Open an issue for bugs or feature requests
+- 🔀 Submit a pull request
+- ⭐ Star the repo if you find it useful
+
+---
+
+## ⚠️ Disclaimer
+
+This assistant is a **preliminary diagnostic tool** for informational purposes only.  
+Always consult a certified BMW technician or authorized service center for final diagnosis and repairs.
+
+---
+
+## 💝 Support
+
+If this project helped you save money on BMW repairs:
+
+- ⭐ **Star this repo** — helps others find it
+- 💝 **[Sponsor this project](https://github.com/sponsors/efefzl)** — support ongoing development
+- 🐛 **Open an issue** — report bugs or suggest features
+
+---
+
+## 📄 License
+
+MIT License — Free to use, modify, and distribute.
